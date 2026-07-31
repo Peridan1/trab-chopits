@@ -1,19 +1,93 @@
 {
-    "usuarios": [
-        {
-            "id": 1,
-            "nome": "Felipe",
-            "email": "espetinho@gmail.com"
-        },
-        {
-            "id": 2,
-            "nome": "Claudio",
-            "email": "claudio@gmail.com"
-        },
-        {
-            "id": 3,
-            "nome": "Daniel",
-            "email": "Daniel@gmail.com"
-        }
-    ]
+  "usuarios": [
+    {
+      "id": 1,
+      "nome": "Felipe",
+      "email": "espetinho@gmail.com"
+    },
+    {
+      "id": 2,
+      "nome": "Claudio",
+      "email": "claudio@gmail.com"
+    },
+    {
+      "id": 3,
+      "nome": "Daniel",
+      "email": "daniel@gmail.com"
+    }
+  ],
+  "produtos": [
+    {
+      "id": 1,
+      "nome": "Fone de Ouvido Bluetooth Pro",
+      "categoria": "eletronicos",
+      "preco": 299.9,
+      "imagem": "🎧",
+      "descricao": "Cancelamento ativo de ruído, som de alta fidelidade e bateria de 30 horas.",
+      "estoque": 15
+    },
+    {
+      "id": 2,
+      "nome": "Smartwatch Sport GPS",
+      "categoria": "eletronicos",
+      "preco": 450,
+      "imagem": "⌚",
+      "descricao": "Monitoramento de frequência cardíaca, resistência à água 5ATM e GPS.",
+      "estoque": 8
+    },
+    {
+      "id": 3,
+      "nome": "Mochila Urbana Impermeável",
+      "categoria": "acessorios",
+      "preco": 189,
+      "imagem": "🎒",
+      "descricao": "Compartimento acolchoado para notebook de até 15.6 polegadas e entrada USB.",
+      "estoque": 20
+    },
+    {
+      "id": 4,
+      "nome": "Camiseta Tech Anti-odor",
+      "categoria": "moda",
+      "preco": 99.9,
+      "imagem": "👕",
+      "descricao": "Tecido tecnológico respirável, não precisa passar e não acumula odores.",
+      "estoque": 50
+    },
+    {
+      "id": 5,
+      "nome": "Teclado Mecânico RGB",
+      "categoria": "eletronicos",
+      "preco": 349.9,
+      "imagem": "⌨️",
+      "descricao": "Switches mecânicos táteis, iluminação RGB customizável e layout ABNT2.",
+      "estoque": 12
+    },
+    {
+      "id": 6,
+      "nome": "Óculos de Sol Polarizado",
+      "categoria": "acessorios",
+      "preco": 149,
+      "imagem": "🕶️",
+      "descricao": "Proteção UV400 completa com armação leve e resistente em acetato.",
+      "estoque": 25
+    },
+    {
+      "nome": "teste",
+      "categoria": "eletronicos",
+      "preco": 1,
+      "imagem": "📦",
+      "descricao": "teste",
+      "estoque": 10,
+      "id": 7
+    }
+  ],
+  "carrinho": [
+    {
+      "produtoId": 1,
+      "nome": "Fone de Ouvido Bluetooth Pro",
+      "preco": 299.9,
+      "quantidade": 1,
+      "id": 1
+    }
+  ]
 }
