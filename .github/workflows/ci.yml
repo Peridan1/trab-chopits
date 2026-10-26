@@ -29,6 +29,8 @@ jobs:
 
       - name: Validar Compilação TypeScript e Build Vite
         run: npm run build
+        env:
+          VITE_API_BASE_URL: /api
 
   docker-validation:
     name: Validação de Containers Docker
@@ -41,6 +43,9 @@ jobs:
 
       - name: Configurar Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      - name: Preparar ambiente com .env.example
+        run: cp .env.example .env
 
       - name: Validar Sintaxe do Docker Compose
         run: |

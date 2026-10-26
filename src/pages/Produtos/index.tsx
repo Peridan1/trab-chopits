@@ -28,20 +28,19 @@ export const Produtos: React.FC = () => {
         setLoading(true);
         setErro(null);
         try {
-            const [respProdutos, respCarrinho] = await Promise.allSettled([
+            const [respProdutos, respCarrinho] = await Promise.all([
                 api.get<Produto[]>(ENDPOINTS.PRODUTOS),
                 api.get<ItemCarrinho[]>(ENDPOINTS.CARRINHO)
             ]);
 
-            if (respProdutos.status === "fulfilled") {
-                setProdutos(respProdutos.value.data);
-            }
-            if (respCarrinho.status === "fulfilled") {
-                setCarrinho(respCarrinho.value.data);
-            }
+            setProdutos(respProdutos.data);
+            setCarrinho(respCarrinho.data);
         } catch (err: unknown) {
             console.error("Erro ao carregar produtos:", err);
-            setErro("Não foi possível conectar ao json-server. Exibindo dados locais.");
+            const msg = err instanceof Error ? err.message : "Erro desconhecido";
+            setErro(`Falha na comunicação com a API REST (${msg}). Verifique se o backend está em execução.`);
+            setProdutos([]);
+            setCarrinho([]);
         } finally {
             setLoading(false);
         }

@@ -6,8 +6,8 @@ services:
     container_name: chopits-api
     restart: unless-stopped
     ports:
-      # Porta 3002 mapeada no host para evitar colisão com outros projetos locais na 3001
-      - "${API_PORT:-3002}:3001"
+      # Falha imediatamente se API_PORT não estiver configurada no .env
+      - "${API_PORT:?Erro: Variavel de ambiente API_PORT obrigatoria ausente no .env}:3001"
     volumes:
       # Persistência bidirecional: alterações no banco mock persistem no host
       - ./jsonserver/dados.json:/app/jsonserver/dados.json
@@ -26,14 +26,14 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile
       target: production
       args:
-        - VITE_API_BASE_URL=/api
+        VITE_API_BASE_URL: "${VITE_API_BASE_URL:?Erro: Variavel de ambiente VITE_API_BASE_URL obrigatoria ausente no .env}"
     container_name: chopits-frontend
     restart: unless-stopped
     ports:
-      - "${FRONTEND_PORT:-80}:80"
+      # Falha imediatamente se FRONTEND_PORT não estiver configurada no .env
+      - "${FRONTEND_PORT:?Erro: Variavel de ambiente FRONTEND_PORT obrigatoria ausente no .env}:80"
     depends_on:
       api:
         condition: service_healthy

@@ -7,8 +7,19 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.join(__dirname, '..');
 
-const DEFAULT_PORT = parseInt(process.env.PORT || '3001', 10);
-const MAX_PORT_ATTEMPTS = 10;
+const rawPort = process.env.PORT;
+
+if (!rawPort || rawPort.trim() === "") {
+  console.error('\n❌ [Configuração Obrigatória Ausente]: A variável de ambiente "PORT" não foi informada!');
+  console.error('Defina PORT no seu arquivo .env ou no ambiente de execução.\n');
+  process.exit(1);
+}
+
+const targetPort = parseInt(rawPort, 10);
+if (isNaN(targetPort)) {
+  console.error(`\n❌ [Valor Inválido]: O valor da porta "${rawPort}" não é um número inteiro válido!\n`);
+  process.exit(1);
+}
 
 function isPortAvailable(port) {
   return new Promise((resolve) => {
@@ -19,27 +30,19 @@ function isPortAvailable(port) {
     server.once('listening', () => {
       server.close(() => resolve(true));
     });
-    server.listen(port, '127.0.0.1');
+    server.listen(port, '0.0.0.0');
   });
 }
 
-async function findAvailablePort(startPort) {
-  for (let offset = 0; offset < MAX_PORT_ATTEMPTS; offset++) {
-    const port = startPort + offset;
-    const available = await isPortAvailable(port);
-    if (available) {
-      return port;
-    }
-  }
-  return startPort;
-}
-
 async function startServer() {
-  const port = await findAvailablePort(DEFAULT_PORT);
-  console.log(`\n🚀 Iniciando JSON-Server na porta: ${port}`);
-  if (port !== DEFAULT_PORT) {
-    console.log(`⚠️  A porta ${DEFAULT_PORT} estava ocupada, usando a porta livre ${port} automaticamente.\n`);
+  const available = await isPortAvailable(targetPort);
+  if (!available) {
+    console.error(`\n❌ [Conflito de Porta]: A porta ${targetPort} configurada já está ocupada por outro processo!`);
+    console.error('O sistema encerrou para evitar conflito. Encerre o processo anterior ou altere a variável PORT no .env.\n');
+    process.exit(1);
   }
+
+  console.log(`\n🚀 Iniciando JSON-Server estritamente na porta: ${targetPort}\n`);
 
   const jsonServerArgs = [
     'json-server',

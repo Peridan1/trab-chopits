@@ -1,10 +1,16 @@
 import axios from "axios";
 
-// Em projetos com Vite no navegador, variáveis de ambiente usam import.meta.env em vez de process.env
-const envPort = typeof import.meta !== "undefined" && import.meta.env ? import.meta.env.VITE_API_PORT : undefined;
-const envBaseUrl = typeof import.meta !== "undefined" && import.meta.env ? import.meta.env.VITE_API_BASE_URL : undefined;
-export const API_PORT = envPort || 3001;
-export const API_BASE_URL = (envBaseUrl && envBaseUrl.trim() !== "") ? envBaseUrl : `http://localhost:${API_PORT}`;
+// Validação estrita de variáveis de ambiente - Abordagem Fail-Fast
+const envBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
+if (!envBaseUrl || typeof envBaseUrl !== "string" || envBaseUrl.trim() === "") {
+    throw new Error(
+        "❌ [Configuração Obrigatória Ausente]: A variável de ambiente 'VITE_API_BASE_URL' não foi configurada! " +
+        "Defina VITE_API_BASE_URL no seu arquivo .env (ex: VITE_API_BASE_URL=http://localhost:3002 ou VITE_API_BASE_URL=/api)."
+    );
+}
+
+export const API_BASE_URL = envBaseUrl.trim();
 
 // Instância centralizada do Axios
 export const api = axios.create({

@@ -22,12 +22,9 @@ export const Usuarios: React.FC = () => {
             setUsuarios(resposta.data);
         } catch (err: unknown) {
             console.error("Erro ao buscar usuários do json-server:", err);
-            setErro("Não foi possível conectar ao json-server. Exibindo dados de contingência.");
-            setUsuarios([
-                { id: 1, nome: "Felipe", email: "espetinho@gmail.com" },
-                { id: 2, nome: "Claudio", email: "claudio@gmail.com" },
-                { id: 3, nome: "Daniel", email: "daniel@gmail.com" }
-            ]);
+            const msg = err instanceof Error ? err.message : "Erro desconhecido";
+            setErro(`Falha na comunicação com a API REST (${msg}). Verifique se o backend está em execução.`);
+            setUsuarios([]);
         } finally {
             setLoading(false);
         }
