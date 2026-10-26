@@ -6,6 +6,9 @@
 ![React Router](https://img.shields.io/badge/React_Router_v7-CA4245?style=for-the-badge&logo=react-router&logoColor=white)
 ![Bootstrap](https://img.shields.io/badge/Bootstrap_5-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)
 ![JSON Server](https://img.shields.io/badge/JSON_Server-000000?style=for-the-badge&logo=json&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Nginx](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)
+![CI Pipeline](https://img.shields.io/badge/CI-GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
 
 Plataforma de e-commerce e sistema interativo desenvolvido como projeto acadêmico do 4º semestre de Análise e Desenvolvimento de Sistemas. O projeto foca em interatividade do usuário, componentização em React 19, roteamento dinamizado com React Router DOM v7, consumo de API REST assíncrona com Axios e validação através de tipagem estática robusta com TypeScript.
 
@@ -59,18 +62,32 @@ O sistema possui as seguintes funcionalidades e módulos interativos:
 
 ## 🚀 Quick Start (Como Rodar o Projeto)
 
-Siga o passo a passo abaixo para executar a aplicação no seu ambiente local:
+### Opção 1: Execução com Docker (Recomendada / 1 Comando) 🐳
 
-### 1. Clonar o repositório e instalar as dependências
+Se você possui o **Docker** e o **Docker Compose** instalados, basta executar:
 
 ```bash
-git clone https://github.com/Peridan1/trab-chopits.git
-cd trab-chopits
+docker compose up --build -d
+```
+
+- **Frontend (Nginx Produção):** Acesse [http://localhost](http://localhost)
+- **Backend Mock (JSON-Server):** Acesse [http://localhost/api/usuarios](http://localhost/api/usuarios) (via Nginx) ou na porta direta [http://localhost:3002/usuarios](http://localhost:3002/usuarios)
+
+Para parar os containers:
+```bash
+docker compose down
+```
+
+---
+
+### Opção 2: Execução Local Nativa com Node.js
+
+#### 1. Instalar as dependências
+```bash
 npm install
 ```
 
-### 2. Iniciar o Projeto Fullstack (Servidor + Frontend em Um Só Comando)
-
+#### 2. Iniciar o Projeto Fullstack (Servidor + Frontend em Um Só Comando)
 ```bash
 npm start
 ```
@@ -80,11 +97,23 @@ npm start
 > 2. Executa o **Vite** no frontend simultaneamente.
 > 3. Abre a aplicação pronta para uso em `http://localhost:5173`.
 
----
-
 Caso prefira rodar em dois terminais separados:
 - **Backend (JSON-Server):** `npm run server`
 - **Frontend (Vite):** `npm run dev`
+
+---
+
+### ⌨️ Tabela de Scripts Disponíveis
+
+| Comando | Descrição |
+| :--- | :--- |
+| `npm run docker:up` | Sobe a aplicação conteinerizada completa em produção (Nginx + API) em background |
+| `npm run docker:down` | Encerra e remove os containers e redes do projeto |
+| `npm run docker:dev` | Inicia o ambiente conteinerizado com Hot Module Reloading (HMR) |
+| `npm run docker:logs` | Acompanha os logs em tempo real dos containers em execução |
+| `npm start` | Inicia JSON-Server e Vite localmente com detecção automática de porta livre |
+| `npm run build` | Validação de tipos TypeScript (`tsc -b`) e compilação de produção com Vite |
+| `npm run lint` | Executa o linter ESLint em todo o código-fonte |
 
 ---
 
@@ -94,6 +123,7 @@ Nossa documentação técnica complementar está mantida na pasta [`docs/`](file
 
 - 🔄 [**01. Transição Hardcoded para API REST**](file:///home/danielpereira/projetos/pessoal/trab-chopits/docs/TRANSICAO_API.md) — Explicativo técnico mostrando a evolução do código estático `const usuarios = [...]` para chamadas assíncronas HTTP com Axios e JSON-Server.
 - ⚔️ [**02. Comparativo Tecnológico: React + Vite vs. Next.js**](file:///home/danielpereira/projetos/pessoal/trab-chopits/docs/COMPARATIVO_STACK.md) — Estudo detalhado abordando diferenças de roteamento, SEO, renderização (CSR vs SSR), vantagens e desvantagens de cada stack.
+- 🐳 [**03. Arquitetura de Containers & Dockerização Fullstack**](file:///home/danielpereira/projetos/pessoal/trab-chopits/docs/ARQUITETURA_CONTAINERS.md) — Guia aprofundado cobrindo o Multi-stage Build, Nginx de alta performance, persistência de dados via volumes e matriz comparativa.
 
 ---
 

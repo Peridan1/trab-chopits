@@ -10,7 +10,12 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "server": "node scripts/start-server.js"
+    "server": "node scripts/start-server.js",
+    "docker:build": "docker compose build",
+    "docker:up": "docker compose up --build -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "docker:dev": "docker compose -f docker-compose.dev.yml up --build"
   },
   "dependencies": {
     "axios": "^1.11.0",

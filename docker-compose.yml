@@ -1,0 +1,45 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: chopits-api
+    restart: unless-stopped
+    ports:
+      # Porta 3002 mapeada no host para evitar colisão com outros projetos locais na 3001
+      - "${API_PORT:-3002}:3001"
+    volumes:
+      # Persistência bidirecional: alterações no banco mock persistem no host
+      - ./jsonserver/dados.json:/app/jsonserver/dados.json
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3001/usuarios"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    networks:
+      - chopits-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+      args:
+        - VITE_API_BASE_URL=/api
+    container_name: chopits-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - chopits-network
+
+networks:
+  chopits-network:
+    driver: bridge
