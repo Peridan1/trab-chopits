@@ -1,0 +1,303 @@
+:root {
+  --chopits-primary: #4f46e5;
+  --chopits-primary-dark: #3730a3;
+  --chopits-primary-light: #eef2ff;
+  --chopits-mint: #10b981;
+  --chopits-mint-light: #d1fae5;
+  --chopits-coral: #f43f5e;
+  --chopits-coral-light: #ffe4e6;
+  --chopits-amber: #f59e0b;
+  --chopits-bg: #f8fafc;
+  --chopits-surface: #ffffff;
+  --chopits-text: #0f172a;
+  --chopits-muted: #64748b;
+  --chopits-border: #e2e8f0;
+}
+
+body {
+  background-color: var(--chopits-bg);
+  color: var(--chopits-text);
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Header & Topbar da Chopits */
+.chopits-topbar {
+  background: linear-gradient(90deg, #312e81 0%, #4338ca 50%, #3730a3 100%);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.78rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.chopits-navbar {
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 60%, #3730a3 100%);
+  box-shadow: 0 4px 20px rgba(79, 70, 229, 0.18);
+}
+
+.chopits-search-wrapper {
+  position: relative;
+  flex: 1;
+  max-width: 620px;
+}
+
+.chopits-search-input {
+  border-radius: 999px;
+  padding: 0.6rem 3.2rem 0.6rem 1.25rem;
+  border: 2px solid transparent;
+  font-size: 0.92rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+}
+
+.chopits-search-input:focus {
+  border-color: var(--chopits-mint);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.25);
+}
+
+.chopits-search-btn {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--chopits-primary);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.chopits-search-btn:hover {
+  background: var(--chopits-primary-dark);
+}
+
+/* Hero Banner & Cupons */
+.chopits-hero-banner {
+  background: linear-gradient(135deg, #312e81 0%, #4f46e5 55%, #0d9488 100%);
+  border-radius: 1rem;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 28px rgba(79, 70, 229, 0.2);
+}
+
+.chopits-coupon-card {
+  background: #fff;
+  border-radius: 0.85rem;
+  border: 1px dashed var(--chopits-primary);
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chopits-coupon-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.12);
+}
+
+/* Categorias em Círculos / Pílulas */
+.chopits-cat-btn {
+  background: #fff;
+  border: 1px solid var(--chopits-border);
+  border-radius: 0.85rem;
+  padding: 0.75rem 0.6rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  text-align: center;
+}
+
+.chopits-cat-btn:hover,
+.chopits-cat-btn.active {
+  border-color: var(--chopits-primary);
+  background-color: var(--chopits-primary-light);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(79, 70, 229, 0.12);
+}
+
+.chopits-cat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--chopits-primary-light);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.45rem;
+  margin-bottom: 0.35rem;
+}
+
+/* Seção Ofertas Relâmpago (Flash Sale) */
+.chopits-flash-header {
+  background: linear-gradient(90deg, #fff1f2 0%, #ffe4e6 50%, #f5f3ff 100%);
+  border: 1px solid #fecdd3;
+  border-radius: 0.85rem;
+}
+
+.chopits-timer-box {
+  background: #0f172a;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.35rem;
+  min-width: 32px;
+  text-align: center;
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Product Card Marketplace */
+.chopits-product-card {
+  background: #fff;
+  border: 1px solid var(--chopits-border);
+  border-radius: 0.85rem;
+  overflow: hidden;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  position: relative;
+}
+
+.chopits-product-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--chopits-primary);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.09);
+}
+
+.chopits-card-thumb {
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  height: 175px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4.2rem;
+  position: relative;
+  text-decoration: none;
+}
+
+.chopits-discount-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: var(--chopits-coral);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.74rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.4rem;
+  box-shadow: 0 2px 6px rgba(244, 63, 94, 0.3);
+}
+
+.chopits-wishlist-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--chopits-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+  z-index: 2;
+}
+
+.chopits-wishlist-btn:hover {
+  transform: scale(1.12);
+  background: #fff;
+}
+
+.chopits-badge-oficial {
+  background-color: var(--chopits-primary);
+  color: #fff;
+  font-size: 0.66rem;
+  font-weight: 700;
+  padding: 0.15rem 0.42rem;
+  border-radius: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.chopits-badge-frete {
+  background-color: var(--chopits-mint-light);
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+  font-size: 0.66rem;
+  font-weight: 700;
+  padding: 0.12rem 0.42rem;
+  border-radius: 0.25rem;
+}
+
+.chopits-price-current {
+  color: var(--chopits-primary);
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+
+.chopits-flash-bar {
+  background: #ffe4e6;
+  border-radius: 999px;
+  height: 18px;
+  position: relative;
+  overflow: hidden;
+}
+
+.chopits-flash-bar-fill {
+  background: linear-gradient(90deg, #f43f5e 0%, #fb7185 100%);
+  height: 100%;
+  border-radius: 999px;
+}
+
+.chopits-flash-bar-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.66rem;
+  font-weight: 800;
+  color: #881337;
+  text-transform: uppercase;
+}
+
+.chopits-btn-primary {
+  background-color: var(--chopits-primary);
+  border-color: var(--chopits-primary);
+  color: #fff;
+  font-weight: 600;
+}
+
+.chopits-btn-primary:hover {
+  background-color: var(--chopits-primary-dark);
+  border-color: var(--chopits-primary-dark);
+  color: #fff;
+}
+
+.chopits-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1080;
+  background: #0f172a;
+  color: #fff;
+  border-left: 4px solid var(--chopits-mint);
+  padding: 0.85rem 1.25rem;
+  border-radius: 0.65rem;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.25);
+  animation: chopitsSlideIn 0.25s ease-out;
+}
+
+@keyframes chopitsSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
