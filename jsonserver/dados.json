@@ -3,90 +3,187 @@
     {
       "id": 1,
       "nome": "Felipe",
-      "email": "espetinho@gmail.com"
+      "email": "espetinho@gmail.com",
+      "cargo": "cliente"
     },
     {
       "id": 2,
       "nome": "Claudio",
-      "email": "claudio@gmail.com"
+      "email": "claudio@gmail.com",
+      "cargo": "vendedor"
     },
     {
       "id": 3,
-      "nome": "Daniel",
-      "email": "daniel@gmail.com"
+      "nome": "Daniel Satel Pereira",
+      "email": "daniel@gmail.com",
+      "cargo": "admin"
     }
   ],
   "produtos": [
     {
       "id": 1,
-      "nome": "Fone de Ouvido Bluetooth Pro",
+      "nome": "Fone de Ouvido Bluetooth ANC Pro Max",
       "categoria": "eletronicos",
-      "preco": 299.9,
+      "preco": 249.9,
+      "precoOriginal": 399.9,
       "imagem": "🎧",
-      "descricao": "Cancelamento ativo de ruído, som de alta fidelidade e bateria de 30 horas.",
-      "estoque": 15
+      "descricao": "Cancelamento ativo de ruído híbrido (ANC), áudio espacial de alta fidelidade, driver de 40mm e bateria de longa duração para até 35 horas de reprodução.",
+      "estoque": 15,
+      "vendidos": 1420,
+      "avaliacao": 4.9,
+      "freteGratis": true,
+      "ofertaRelampago": true,
+      "lojaOficial": true,
+      "variacoes": ["Preto Matte", "Prata Lunar", "Roxo Chopits"],
+      "avaliacoes": [
+        {
+          "id": 101,
+          "usuario": "Mariana S.",
+          "nota": 5,
+          "comentario": "Isolamento acústico absurdo pelo preço! Chegou super rápido.",
+          "data": "24 Out 2026"
+        },
+        {
+          "id": 102,
+          "usuario": "Lucas T.",
+          "nota": 5,
+          "comentario": "A cor Roxo Chopits é linda demais e a bateria dura a semana toda.",
+          "data": "20 Out 2026"
+        }
+      ]
     },
     {
       "id": 2,
-      "nome": "Smartwatch Sport GPS",
+      "nome": "Smartwatch Ultra AMOLED GPS 5ATM",
       "categoria": "eletronicos",
-      "preco": 450,
+      "preco": 329.9,
+      "precoOriginal": 499.9,
       "imagem": "⌚",
-      "descricao": "Monitoramento de frequência cardíaca, resistência à água 5ATM e GPS.",
-      "estoque": 8
+      "descricao": "Tela AMOLED sempre ativa de 1.95 polegadas, GPS integrado de dupla frequência, monitoramento de oxigênio no sangue (SpO2), batimentos cardíacos e resistência à água 5ATM.",
+      "estoque": 8,
+      "vendidos": 890,
+      "avaliacao": 4.8,
+      "freteGratis": true,
+      "ofertaRelampago": true,
+      "lojaOficial": true,
+      "variacoes": ["Pulseira Preta", "Pulseira Verde Menta", "Titânio"],
+      "avaliacoes": [
+        {
+          "id": 103,
+          "usuario": "Carlos E.",
+          "nota": 5,
+          "comentario": "GPS muito preciso para corrida de rua, não precisa levar o celular.",
+          "data": "22 Out 2026"
+        }
+      ]
     },
     {
       "id": 3,
-      "nome": "Mochila Urbana Impermeável",
+      "nome": "Mochila Executiva Impermeável Anti-Furto 15.6\"",
       "categoria": "acessorios",
-      "preco": 189,
+      "preco": 149.9,
+      "precoOriginal": 229.9,
       "imagem": "🎒",
-      "descricao": "Compartimento acolchoado para notebook de até 15.6 polegadas e entrada USB.",
-      "estoque": 20
+      "descricao": "Compartimento térmico e acolchoado para notebook de até 15.6 polegadas, saída USB externa integrada, zíper oculto anti-furto e tecido Oxford impermeável.",
+      "estoque": 22,
+      "vendidos": 2150,
+      "avaliacao": 4.9,
+      "freteGratis": true,
+      "ofertaRelampago": false,
+      "lojaOficial": true,
+      "variacoes": ["Cinza Espacial", "Preto Urbano", "Azul Marinho"]
     },
     {
       "id": 4,
-      "nome": "Camiseta Tech Anti-odor",
+      "nome": "Camiseta Tech Modal Anti-Odor & Não Amassa",
       "categoria": "moda",
-      "preco": 99.9,
+      "preco": 79.9,
+      "precoOriginal": 129.9,
       "imagem": "👕",
-      "descricao": "Tecido tecnológico respirável, não precisa passar e não acumula odores.",
-      "estoque": 50
+      "descricao": "Malha tecnológica de fibra modal com elastano: regulação térmica inteligente, não precisa passar no ferro, não desbota e possui proteção UV50+.",
+      "estoque": 50,
+      "vendidos": 3410,
+      "avaliacao": 4.9,
+      "freteGratis": true,
+      "ofertaRelampago": true,
+      "lojaOficial": false,
+      "variacoes": ["P - Preta", "M - Preta", "G - Preta", "G - Branca"]
     },
     {
       "id": 5,
-      "nome": "Teclado Mecânico RGB",
-      "categoria": "eletronicos",
-      "preco": 349.9,
+      "nome": "Teclado Mecânico Gamer Wireless RGB Hot-Swap",
+      "categoria": "games",
+      "preco": 289.9,
+      "precoOriginal": 419.9,
       "imagem": "⌨️",
-      "descricao": "Switches mecânicos táteis, iluminação RGB customizável e layout ABNT2.",
-      "estoque": 12
+      "descricao": "Formato compacto 75%, conexão Tri-Mode (Bluetooth 5.1, Dongle 2.4GHz e Cabo USB-C), switches mecânicos táteis pré-lubrificados e layout ABNT2.",
+      "estoque": 12,
+      "vendidos": 640,
+      "avaliacao": 5.0,
+      "freteGratis": true,
+      "ofertaRelampago": true,
+      "lojaOficial": true,
+      "variacoes": ["Switch Red (Linear)", "Switch Brown (Tátil)", "Switch Blue (Clicky)"]
     },
     {
       "id": 6,
-      "nome": "Óculos de Sol Polarizado",
+      "nome": "Óculos de Sol Polarizado UV400 Acetato Italiano",
       "categoria": "acessorios",
-      "preco": 149,
+      "preco": 119.9,
+      "precoOriginal": 179.9,
       "imagem": "🕶️",
-      "descricao": "Proteção UV400 completa com armação leve e resistente em acetato.",
-      "estoque": 25
+      "descricao": "Lentes polarizadas antirreflexo com proteção UV400 certificada, dobradiças reforçadas em metal e armação ultraleve em acetato.",
+      "estoque": 25,
+      "vendidos": 510,
+      "avaliacao": 4.7,
+      "freteGratis": false,
+      "ofertaRelampago": false,
+      "lojaOficial": false,
+      "variacoes": ["Lente Preta", "Lente Espelhada", "Tartaruga"]
     },
     {
-      "nome": "teste",
-      "categoria": "eletronicos",
-      "preco": 1,
-      "imagem": "📦",
-      "descricao": "teste",
-      "estoque": 10,
-      "id": 7
+      "id": 7,
+      "nome": "Mouse Gamer Ultraleve 26.000 DPI Sem Fio",
+      "categoria": "games",
+      "preco": 199.9,
+      "precoOriginal": 299.9,
+      "imagem": "🖱️",
+      "descricao": "Apenas 54 gramas de peso, sensor óptico topo de linha PAW3395, switches ópticos de 80 milhões de cliques e pés 100% PTFE puro.",
+      "estoque": 18,
+      "vendidos": 975,
+      "avaliacao": 4.9,
+      "freteGratis": true,
+      "ofertaRelampago": false,
+      "lojaOficial": true,
+      "variacoes": ["Branco Gelo", "Preto Stealth", "Violeta Neon"]
+    },
+    {
+      "id": 8,
+      "nome": "Luminária de Monitor LED Barra Assimétrica USB-C",
+      "categoria": "casa",
+      "preco": 134.9,
+      "precoOriginal": 199.0,
+      "imagem": "💡",
+      "descricao": "Ilumina sua bancada de estudos/trabalho sem causar reflexo na tela do monitor. Controle touch de brilho e 3 temperaturas de cor (3000K a 6500K).",
+      "estoque": 14,
+      "vendidos": 1180,
+      "avaliacao": 4.8,
+      "freteGratis": true,
+      "ofertaRelampago": false,
+      "lojaOficial": false,
+      "variacoes": ["Preto Fosco", "Alumínio Prata"]
     }
   ],
   "carrinho": [
     {
       "produtoId": 1,
-      "nome": "Fone de Ouvido Bluetooth Pro",
-      "preco": 299.9,
+      "nome": "Fone de Ouvido Bluetooth ANC Pro Max",
+      "preco": 249.9,
+      "precoOriginal": 399.9,
+      "imagem": "🎧",
       "quantidade": 1,
+      "selecionado": true,
+      "variacaoEscolhida": "Roxo Chopits",
       "id": 1
     }
   ]
