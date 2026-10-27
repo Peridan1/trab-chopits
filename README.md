@@ -41,20 +41,24 @@ O sistema utiliza uma arquitetura moderna para Aplicações de Página Única (S
 O sistema possui as seguintes funcionalidades e módulos interativos:
 
 ### 🛍️ Catálogo de Produtos Interativo (`/produtos`)
+
 - **Filtros e Busca em Tempo Real:** Pesquisa dinâmica por nome/descrição e categorização (Eletrônicos, Acessórios, Moda).
 - **Parâmetros Dinâmicos de URL:** Suporte a URLs diretas como `/produtos/eletronicos` ou `/produtos/1`.
 - **Simulador de Carrinho:** Adição de produtos com contador responsivo e notificações.
 
 ### 👤 Gerenciador CRUD de Usuários (`/usuarios`)
+
 - **Integração com API REST:** Operações de Leitura (GET), Cadastro (POST), Edição (PUT) e Remoção (DELETE) persistidas em `jsonserver/dados.json`.
 - **Modais e Formulários Interativos:** Validação de campos (nome, e-mail) e estados de carregamento.
 - **Resiliência a Erros:** Fallback gracioso para dados locais caso o backend esteja temporariamente indisponível.
 
 ### 📌 Central de Lembretes & Tarefas (`/home`)
+
 - **Gerenciador de Tarefas:** Adição e exclusão de lembretes em tempo real.
 - **Persistência Local:** Sincronização automática com o `localStorage` do navegador.
 
 ### ℹ️ Apresentação & Autenticação (`/sobre` e `/login`)
+
 - **Página Sobre Flexível:** Informações do projeto com tratamento de parâmetros como `/sobre/equipe` ou `/sobre/historia`.
 - **Tela de Login:** Formulário estilizado com simulação de autenticação e navegação guiada.
 
@@ -74,6 +78,7 @@ docker compose up --build -d
 - **Backend Mock (JSON-Server):** Acesse [http://localhost/api/usuarios](http://localhost/api/usuarios) (via Nginx) ou na porta direta [http://localhost:3002/usuarios](http://localhost:3002/usuarios)
 
 Para parar os containers:
+
 ```bash
 docker compose down
 ```
@@ -83,21 +88,25 @@ docker compose down
 ### Opção 2: Execução Local Nativa com Node.js
 
 #### 1. Instalar as dependências
+
 ```bash
 npm install
 ```
 
 #### 2. Iniciar o Projeto Fullstack (Servidor + Frontend em Um Só Comando)
+
 ```bash
 npm start
 ```
 
 > **💡 O que o `npm start` faz:**
+>
 > 1. Executa o **JSON-Server** no backend com busca automática de porta livre (ex: `3001` ou `3002`).
 > 2. Executa o **Vite** no frontend simultaneamente.
 > 3. Abre a aplicação pronta para uso em `http://localhost:5173`.
 
 Caso prefira rodar em dois terminais separados:
+
 - **Backend (JSON-Server):** `npm run server`
 - **Frontend (Vite):** `npm run dev`
 
@@ -105,25 +114,26 @@ Caso prefira rodar em dois terminais separados:
 
 ### ⌨️ Tabela de Scripts Disponíveis
 
-| Comando | Descrição |
-| :--- | :--- |
-| `npm run docker:up` | Sobe a aplicação conteinerizada completa em produção (Nginx + API) em background |
-| `npm run docker:down` | Encerra e remove os containers e redes do projeto |
-| `npm run docker:dev` | Inicia o ambiente conteinerizado com Hot Module Reloading (HMR) |
-| `npm run docker:logs` | Acompanha os logs em tempo real dos containers em execução |
-| `npm start` | Inicia JSON-Server e Vite localmente com detecção automática de porta livre |
-| `npm run build` | Validação de tipos TypeScript (`tsc -b`) e compilação de produção com Vite |
-| `npm run lint` | Executa o linter ESLint em todo o código-fonte |
+| Comando               | Descrição                                                                        |
+| :-------------------- | :------------------------------------------------------------------------------- |
+| `npm run docker:up`   | Sobe a aplicação conteinerizada completa em produção (Nginx + API) em background |
+| `npm run docker:down` | Encerra e remove os containers e redes do projeto                                |
+| `npm run docker:dev`  | Inicia o ambiente conteinerizado com Hot Module Reloading (HMR)                  |
+| `npm run docker:logs` | Acompanha os logs em tempo real dos containers em execução                       |
+| `npm start`           | Inicia JSON-Server e Vite localmente com detecção automática de porta livre      |
+| `npm run build`       | Validação de tipos TypeScript (`tsc -b`) e compilação de produção com Vite       |
+| `npm run lint`        | Executa o linter ESLint em todo o código-fonte                                   |
 
 ---
 
-## 📚 Documentação Técnica Completa
+## 📚 Documentação Técnica & Acadêmica Completa
 
-Nossa documentação técnica complementar está mantida na pasta [`docs/`](file:///home/danielpereira/projetos/pessoal/trab-chopits/docs):
+Nossa documentação técnica e pedagógica complementar está mantida na pasta [`docs/`](docs):
 
-- 🔄 [**01. Transição Hardcoded para API REST**](file:///home/danielpereira/projetos/pessoal/trab-chopits/docs/TRANSICAO_API.md) — Explicativo técnico mostrando a evolução do código estático `const usuarios = [...]` para chamadas assíncronas HTTP com Axios e JSON-Server.
-- ⚔️ [**02. Comparativo Tecnológico: React + Vite vs. Next.js**](file:///home/danielpereira/projetos/pessoal/trab-chopits/docs/COMPARATIVO_STACK.md) — Estudo detalhado abordando diferenças de roteamento, SEO, renderização (CSR vs SSR), vantagens e desvantagens de cada stack.
-- 🐳 [**03. Arquitetura de Containers & Dockerização Fullstack**](file:///home/danielpereira/projetos/pessoal/trab-chopits/docs/ARQUITETURA_CONTAINERS.md) — Guia aprofundado cobrindo o Multi-stage Build, Nginx de alta performance, persistência de dados via volumes e matriz comparativa.
+- 🎓 [**01. Relatório Técnico & Documentação Acadêmica**](docs/DOCUMENTACAO_ACADEMICA.md) — **(Novo!)** Registro dos conceitos lecionados pelo professor: Fundamentos e motivação dos Hooks (`useState`, `useEffect`, `useCallback`, `useRef`), rastreabilidade no código-fonte, arquitetura de software e roadmap de evolução para marketplace.
+- 🔄 [**02. Transição Hardcoded para API REST**](docs/TRANSICAO_API.md) — Explicativo técnico mostrando a evolução do código estático `const usuarios = [...]` para chamadas assíncronas HTTP com Axios e JSON-Server.
+- ⚔️ [**03. Comparativo Tecnológico: React + Vite vs. Next.js**](docs/COMPARATIVO_STACK.md) — Estudo detalhado abordando diferenças de roteamento, SEO, renderização (CSR vs SSR), vantagens e desvantagens de cada stack.
+- 🐳 [**04. Arquitetura de Containers & Dockerização Fullstack**](docs/ARQUITETURA_CONTAINERS.md) — Guia aprofundado cobrindo o Multi-stage Build, Nginx de alta performance, persistência de dados via volumes e matriz comparativa.
 
 ---
 
