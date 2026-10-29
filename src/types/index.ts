@@ -1,8 +1,31 @@
+export interface EnderecoUsuario {
+    cep: string;
+    logradouro: string;
+    numero: string;
+    bairro: string;
+    cidade: string;
+    uf: string;
+}
+
+export interface PedidoHistorico {
+    id: string;
+    data: string;
+    itens: ItemCarrinho[];
+    total: number;
+    status: "Processando" | "Em Transporte" | "Entregue";
+    codigoRastreio: string;
+    enderecoEntrega: string;
+    metodoPagamento: "pix" | "cartao";
+}
+
 export interface Usuario {
     id: number;
     nome: string;
     email: string;
+    telefone?: string;
     cargo?: "cliente" | "vendedor" | "admin";
+    endereco?: EnderecoUsuario;
+    pedidos?: PedidoHistorico[];
 }
 
 export interface AvaliacaoProduto {

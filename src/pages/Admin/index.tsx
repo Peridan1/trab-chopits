@@ -831,14 +831,14 @@ export const Admin: React.FC = () => {
 
                                 <div className="chopits-hero-banner p-4 d-flex flex-column justify-content-between">
                                     <div>
-                                        <div className="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-white bg-opacity-15 mb-3 small fw-semibold">
+                                        <div className="chopits-hero-badge">
                                             <span>{rascunhoBanner.badgeTexto}</span>
-                                            <span className="badge bg-success">
+                                            <span className="badge-highlight">
                                                 {rascunhoBanner.badgeDestaque}
                                             </span>
                                         </div>
-                                        <h3 className="fw-bold mb-2">{rascunhoBanner.titulo}</h3>
-                                        <p className="text-white text-opacity-85 small mb-4">
+                                        <h3 className="fw-bold mb-2 text-white">{rascunhoBanner.titulo}</h3>
+                                        <p className="text-white small mb-4" style={{ opacity: 0.95 }}>
                                             {rascunhoBanner.subtitulo}
                                         </p>
                                     </div>

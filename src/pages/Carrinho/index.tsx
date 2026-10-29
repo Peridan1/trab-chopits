@@ -12,7 +12,9 @@ export const Carrinho: React.FC = () => {
         alternarSelecaoItemCarrinho,
         selecionarTodosCarrinho,
         removerDoCarrinho,
-        limparItensSelecionadosCarrinho
+        limparItensSelecionadosCarrinho,
+        adicionarPedidoAoHistorico,
+        usuarioLogado
     } = useStore();
 
     const [codigoInput, setCodigoInput] = useState("");
@@ -66,6 +68,16 @@ export const Carrinho: React.FC = () => {
 
     const handleFinalizarPedido = async () => {
         if (itensSelecionados.length === 0) return;
+        adicionarPedidoAoHistorico({
+            itens: itensSelecionados,
+            total: totalFinal,
+            status: "Processando",
+            codigoRastreio: `BR${Math.floor(100000000 + Math.random() * 900000000)}SP`,
+            enderecoEntrega: usuarioLogado?.endereco
+                ? `${usuarioLogado.endereco.logradouro}, ${usuarioLogado.endereco.numero} - ${usuarioLogado.endereco.cidade}/${usuarioLogado.endereco.uf}`
+                : "Av. Paulista, 1000 - São Paulo/SP",
+            metodoPagamento
+        });
         await limparItensSelecionadosCarrinho();
         setPedidoFinalizado(true);
     };
@@ -76,11 +88,14 @@ export const Carrinho: React.FC = () => {
                 <div className="display-3 mb-3">🎉</div>
                 <h2 className="fw-bold text-success mb-2">Pedido Confirmado com Sucesso!</h2>
                 <p className="text-muted col-md-7 mx-auto mb-4">
-                    Seu pedido já está sendo preparado para envio pelo Centro de Distribuição Chopits.
-                    Você receberá o código de rastreamento por e-mail.
+                    Seu pedido já foi registrado e está sendo preparado pelo Centro de Distribuição Chopits.
+                    Você pode acompanhar o status e o código de rastreamento no seu perfil.
                 </p>
-                <div className="d-flex justify-content-center gap-3">
-                    <Link to="/home" className="btn chopits-btn-primary px-4 py-2">
+                <div className="d-flex flex-wrap justify-content-center gap-3">
+                    <Link to="/perfil" className="btn chopits-btn-primary px-4 py-2">
+                        📦 Ver Meus Pedidos no Perfil
+                    </Link>
+                    <Link to="/home" className="btn btn-outline-secondary px-4 py-2">
                         Voltar para a Vitrine
                     </Link>
                     <Link to="/produtos" className="btn btn-outline-secondary px-4 py-2">

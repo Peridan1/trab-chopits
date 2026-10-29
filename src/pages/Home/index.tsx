@@ -101,14 +101,14 @@ export const Home: React.FC = () => {
                 <div className="col-lg-8">
                     <div className="chopits-hero-banner h-100 p-4 p-md-5 d-flex flex-column justify-content-between">
                         <div>
-                            <div className="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-white bg-opacity-15 mb-3 small fw-semibold">
+                            <div className="chopits-hero-badge">
                                 <span>{homeBannerConfig.badgeTexto}</span>
-                                <span className="badge bg-success">{homeBannerConfig.badgeDestaque}</span>
+                                <span className="badge-highlight">{homeBannerConfig.badgeDestaque}</span>
                             </div>
-                            <h1 className="display-6 fw-bold mb-2">
+                            <h1 className="display-6 fw-bold mb-2 text-white">
                                 {homeBannerConfig.titulo}
                             </h1>
-                            <p className="text-white text-opacity-85 mb-4 col-md-10">
+                            <p className="text-white mb-4 col-md-10" style={{ fontSize: "1.05rem", opacity: 0.95 }}>
                                 {homeBannerConfig.subtitulo}
                             </p>
                         </div>
@@ -123,7 +123,7 @@ export const Home: React.FC = () => {
                             {homeBannerConfig.exibirOfertasRelampago && (
                                 <a
                                     href="#ofertas-relampago"
-                                    className="btn btn-outline-light px-4 py-2 rounded-pill fw-semibold"
+                                    className="btn btn-outline-light px-4 py-2 rounded-pill fw-bold text-white border-white"
                                 >
                                     ⚡ Ver Ofertas Relâmpago
                                 </a>
@@ -335,9 +335,14 @@ export const Home: React.FC = () => {
                                 Sincronizada automaticamente com o <code>localStorage</code> do seu navegador
                             </small>
                         </div>
-                        <Link to="/carrinho" className="btn btn-outline-primary btn-sm">
-                            Ir para o Carrinho 🛒
-                        </Link>
+                        <div className="d-flex gap-2">
+                            <Link to="/wishlist" className="btn btn-outline-primary btn-sm fw-semibold">
+                                Ver Página Completa de Desejos ❤️
+                            </Link>
+                            <Link to="/carrinho" className="btn btn-outline-secondary btn-sm">
+                                Ir para o Carrinho 🛒
+                            </Link>
+                        </div>
                     </div>
 
                     <div className="card-body p-3">

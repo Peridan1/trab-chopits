@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
 import { api, ENDPOINTS } from "../services/api";
-import type { Produto, ItemCarrinho, Cupom, HomeBannerConfig } from "../types";
+import type { Produto, ItemCarrinho, Cupom, HomeBannerConfig, Usuario, PedidoHistorico } from "../types";
 
 export const DEFAULT_HOME_BANNER_CONFIG: HomeBannerConfig = {
     badgeTexto: "✨ MEGA FESTIVAL CHOPITS 2026",
@@ -167,6 +167,93 @@ export const CUPONS_DISPONIVEIS: Cupom[] = [
     }
 ];
 
+export const USUARIOS_FALLBACK: Usuario[] = [
+    {
+        id: 1,
+        nome: "Felipe Cliente",
+        email: "espetinho@gmail.com",
+        cargo: "cliente",
+        telefone: "(11) 98765-4321",
+        endereco: {
+            cep: "01310-100",
+            logradouro: "Av. Paulista",
+            numero: "1000",
+            bairro: "Bela Vista",
+            cidade: "São Paulo",
+            uf: "SP"
+        },
+        pedidos: [
+            {
+                id: "CHP-104921",
+                data: "2026-10-25",
+                itens: [
+                    {
+                        produtoId: 1,
+                        nome: "Fone de Ouvido Bluetooth ANC Pro Max",
+                        preco: 249.9,
+                        quantidade: 1,
+                        imagem: "🎧"
+                    }
+                ],
+                total: 249.9,
+                status: "Em Transporte",
+                codigoRastreio: "BR104921890SP",
+                enderecoEntrega: "Av. Paulista, 1000 - São Paulo/SP",
+                metodoPagamento: "pix"
+            }
+        ]
+    },
+    {
+        id: 2,
+        nome: "Claudio Atendimento",
+        email: "claudio@gmail.com",
+        cargo: "vendedor",
+        telefone: "(11) 97654-3210"
+    },
+    {
+        id: 3,
+        nome: "Daniel Satel Pereira",
+        email: "daniel@gmail.com",
+        cargo: "admin",
+        telefone: "(11) 99999-8888",
+        endereco: {
+            cep: "04571-010",
+            logradouro: "Av. Engenheiro Luís Carlos Berrini",
+            numero: "500",
+            bairro: "Brooklin",
+            cidade: "São Paulo",
+            uf: "SP"
+        },
+        pedidos: [
+            {
+                id: "CHP-998412",
+                data: "2026-10-28",
+                itens: [
+                    {
+                        produtoId: 2,
+                        nome: "Smartwatch Ultra AMOLED GPS 5ATM",
+                        preco: 329.9,
+                        quantidade: 1,
+                        imagem: "⌚"
+                    },
+                    {
+                        produtoId: 5,
+                        nome: "Teclado Mecânico Gamer Wireless RGB Hot-Swap",
+                        preco: 289.9,
+                        quantidade: 1,
+                        imagem: "⌨️"
+                    }
+                ],
+                total: 619.8,
+                status: "Entregue",
+                codigoRastreio: "BR998412712SP",
+                enderecoEntrega: "Av. Eng. Luís Carlos Berrini, 500 - São Paulo/SP",
+                metodoPagamento: "pix"
+            }
+        ]
+    }
+];
+
 interface SnapshotPreco {
     dataHora: string;
     precos: Record<number, { preco: number; precoOriginal?: number }>;
@@ -176,6 +263,8 @@ interface StoreContextType {
     produtos: Produto[];
     carrinho: ItemCarrinho[];
     favoritos: number[];
+    usuarioLogado: Usuario | null;
+    usuarios: Usuario[];
     cupomAtivo: Cupom | null;
     buscaGlobal: string;
     setBuscaGlobal: React.Dispatch<React.SetStateAction<string>>;
@@ -187,6 +276,10 @@ interface StoreContextType {
     homeBannerConfig: HomeBannerConfig;
     dataSnapshotPrecos: string | null;
     recarregarDados: () => Promise<void>;
+    login: (email: string, senha?: string) => Promise<{ sucesso: boolean; mensagem: string; usuario?: Usuario }>;
+    logout: () => void;
+    atualizarPerfil: (dados: Partial<Usuario>) => Promise<void>;
+    adicionarPedidoAoHistorico: (pedido: Omit<PedidoHistorico, "id" | "data">) => void;
     adicionarAoCarrinho: (produto: Produto, variacao?: string, qtd?: number) => Promise<void>;
     atualizarQuantidadeCarrinho: (itemId: number, novaQtd: number) => Promise<void>;
     alternarSelecaoItemCarrinho: (itemId: number) => void;
@@ -194,6 +287,7 @@ interface StoreContextType {
     removerDoCarrinho: (itemId: number) => Promise<void>;
     limparItensSelecionadosCarrinho: () => Promise<void>;
     alternarFavorito: (produtoId: number) => void;
+    limparFavoritos: () => void;
     aplicarCupom: (codigo: string) => boolean;
     removerCupom: () => void;
     cadastrarNovoProduto: (novo: Omit<Produto, "id">) => Promise<void>;
@@ -216,6 +310,37 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const [buscaGlobal, setBuscaGlobal] = useState<string>("");
     const [cupomAtivo, setCupomAtivo] = useState<Cupom | null>(null);
     const [notificacao, setNotificacao] = useState<string | null>(null);
+
+    // Autenticação e Perfil de Usuário persistido no localStorage
+    const [usuarioLogado, setUsuarioLogado] = useState<Usuario | null>(() => {
+        try {
+            const salvo = localStorage.getItem("chopits_auth_user");
+            return salvo ? JSON.parse(salvo) : null;
+        } catch {
+            return null;
+        }
+    });
+
+    const [usuarios, setUsuarios] = useState<Usuario[]>(() => {
+        try {
+            const salvos = localStorage.getItem("chopits_usuarios_cadastrados");
+            return salvos ? JSON.parse(salvos) : USUARIOS_FALLBACK;
+        } catch {
+            return USUARIOS_FALLBACK;
+        }
+    });
+
+    useEffect(() => {
+        if (usuarioLogado) {
+            localStorage.setItem("chopits_auth_user", JSON.stringify(usuarioLogado));
+        } else {
+            localStorage.removeItem("chopits_auth_user");
+        }
+    }, [usuarioLogado]);
+
+    useEffect(() => {
+        localStorage.setItem("chopits_usuarios_cadastrados", JSON.stringify(usuarios));
+    }, [usuarios]);
 
     // Configuração da Vitrine da Home editável pelo Admin
     const [homeBannerConfig, setHomeBannerConfig] = useState<HomeBannerConfig>(() => {
@@ -258,13 +383,99 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }, 3200);
     }, []);
 
+    const login = useCallback(async (email: string, senha?: string) => {
+        void senha;
+        const emailLimpo = email.trim().toLowerCase();
+        const encontrado = usuarios.find(u => u.email.toLowerCase() === emailLimpo);
+        if (encontrado) {
+            setUsuarioLogado(encontrado);
+            exibirNotificacao(`👋 Bem-vindo(a) de volta, ${encontrado.nome}!`);
+            return { sucesso: true, mensagem: "Login realizado com sucesso!", usuario: encontrado };
+        }
+        // Criação de perfil para novo visitante/cliente
+        const partes = emailLimpo.split("@")[0].replace(/[._-]/g, " ").split(" ");
+        const nomeFormatado = partes.map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(" ");
+        const novoUsuario: Usuario = {
+            id: Date.now(),
+            nome: nomeFormatado || "Cliente Chopits",
+            email: emailLimpo,
+            cargo: "cliente",
+            telefone: "(11) 98765-4321",
+            pedidos: []
+        };
+        setUsuarios(prev => [...prev, novoUsuario]);
+        setUsuarioLogado(novoUsuario);
+        exibirNotificacao(`🎉 Bem-vindo(a) à Chopits Store, ${novoUsuario.nome}!`);
+        return { sucesso: true, mensagem: "Conta criada e autenticada com sucesso!", usuario: novoUsuario };
+    }, [usuarios, exibirNotificacao]);
+
+    const logout = useCallback(() => {
+        setUsuarioLogado(null);
+        exibirNotificacao("Você encerrou sua sessão na Chopits Store.");
+    }, [exibirNotificacao]);
+
+    const atualizarPerfil = useCallback(async (dados: Partial<Usuario>) => {
+        setUsuarioLogado(prev => {
+            if (!prev) return null;
+            return { ...prev, ...dados };
+        });
+        setUsuarios(prev => prev.map(u => (u.id === usuarioLogado?.id ? { ...u, ...dados } : u)));
+        exibirNotificacao("✅ Dados do perfil atualizados com sucesso!");
+    }, [usuarioLogado, exibirNotificacao]);
+
+    const adicionarPedidoAoHistorico = useCallback((novoPedido: Omit<PedidoHistorico, "id" | "data">) => {
+        const idPedido = `CHP-${Math.floor(100000 + Math.random() * 900000)}`;
+        const dataPedido = new Date().toISOString().split("T")[0];
+        const pedidoCompleto: PedidoHistorico = {
+            ...novoPedido,
+            id: idPedido,
+            data: dataPedido
+        };
+
+        setUsuarioLogado(prev => {
+            if (!prev) {
+                return {
+                    id: 999,
+                    nome: "Cliente Visitante",
+                    email: "cliente@chopits.com.br",
+                    cargo: "cliente",
+                    pedidos: [pedidoCompleto]
+                };
+            }
+            return {
+                ...prev,
+                pedidos: [pedidoCompleto, ...(prev.pedidos || [])]
+            };
+        });
+
+        setUsuarios(prev =>
+            prev.map(u => {
+                if (u.id === usuarioLogado?.id) {
+                    return {
+                        ...u,
+                        pedidos: [pedidoCompleto, ...(u.pedidos || [])]
+                    };
+                }
+                return u;
+            })
+        );
+
+        exibirNotificacao(`📦 Pedido ${idPedido} registrado no seu histórico com sucesso!`);
+    }, [usuarioLogado, exibirNotificacao]);
+
+    const limparFavoritos = useCallback(() => {
+        setFavoritos([]);
+        exibirNotificacao("Lista de Desejos esvaziada.");
+    }, [exibirNotificacao]);
+
     const recarregarDados = useCallback(async () => {
         setLoading(true);
         setErroApi(null);
         try {
-            const [respProdutos, respCarrinho] = await Promise.all([
+            const [respProdutos, respCarrinho, respUsuarios] = await Promise.all([
                 api.get<Produto[]>(ENDPOINTS.PRODUTOS),
-                api.get<ItemCarrinho[]>(ENDPOINTS.CARRINHO)
+                api.get<ItemCarrinho[]>(ENDPOINTS.CARRINHO),
+                api.get<Usuario[]>(ENDPOINTS.USUARIOS).catch(() => ({ data: USUARIOS_FALLBACK }))
             ]);
             setProdutos(respProdutos.data);
             setCarrinho(
@@ -273,6 +484,16 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                     selecionado: item.selecionado ?? true
                 }))
             );
+            if (respUsuarios?.data && respUsuarios.data.length > 0) {
+                setUsuarios(prev => {
+                    const mapa = new Map(prev.map(u => [u.id, u]));
+                    respUsuarios.data.forEach(u => {
+                        const existente = mapa.get(u.id);
+                        mapa.set(u.id, { ...u, ...existente });
+                    });
+                    return Array.from(mapa.values());
+                });
+            }
             setFonteDados("api");
         } catch (err: unknown) {
             console.warn("Usando catálogo local de fallback (API offline):", err);
@@ -561,6 +782,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                 produtos,
                 carrinho,
                 favoritos,
+                usuarioLogado,
+                usuarios,
                 cupomAtivo,
                 buscaGlobal,
                 setBuscaGlobal,
@@ -572,6 +795,10 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                 homeBannerConfig,
                 dataSnapshotPrecos: snapshotPrecos?.dataHora ?? null,
                 recarregarDados,
+                login,
+                logout,
+                atualizarPerfil,
+                adicionarPedidoAoHistorico,
                 adicionarAoCarrinho,
                 atualizarQuantidadeCarrinho,
                 alternarSelecaoItemCarrinho,
@@ -579,6 +806,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                 removerDoCarrinho,
                 limparItensSelecionadosCarrinho,
                 alternarFavorito,
+                limparFavoritos,
                 aplicarCupom,
                 removerCupom,
                 cadastrarNovoProduto,
