@@ -6,6 +6,8 @@ import { Login } from "../pages/Login";
 import { Produtos } from "../pages/Produtos";
 import { ProdutoDetalhe } from "../pages/ProdutoDetalhe";
 import { Carrinho } from "../pages/Carrinho";
+import { Wishlist } from "../pages/Wishlist";
+import { Perfil } from "../pages/Perfil";
 import { Usuarios } from "../pages/Usuarios";
 import { Admin } from "../pages/Admin";
 import { Sobre } from "../pages/Sobre";
@@ -23,6 +25,8 @@ export const Rotas = () => {
                         <Route path="/produtos/:parametro" element={<Produtos />} />
                         <Route path="/produto/:id" element={<ProdutoDetalhe />} />
                         <Route path="/carrinho" element={<Carrinho />} />
+                        <Route path="/wishlist" element={<Wishlist />} />
+                        <Route path="/perfil" element={<Perfil />} />
                         <Route path="/admin" element={<Admin />} />
                         <Route path="/usuarios" element={<Usuarios />} />
                         <Route path="/sobre" element={<Sobre />} />
@@ -44,16 +48,18 @@ export const Rotas = () => {
                     </Routes>
                 </main>
 
-                {/* Rodapé Institucional do Marketplace */}
+                {/* Rodapé Institucional do E-Commerce */}
                 <footer className="bg-white border-top py-4 mt-auto">
                     <div className="container d-flex flex-wrap justify-content-between align-items-center gap-3 small text-muted">
                         <div>
-                            <strong className="text-dark">🛍️ Chopits Marketplace Oficial</strong> — Desenvolvido por Daniel Satel Pereira (4º Semestre ADS)
+                            <strong className="text-dark">🛍️ Chopits Store — E-commerce Oficial</strong> — Desenvolvido por Daniel Satel Pereira (4º Semestre ADS)
                         </div>
-                        <div className="d-flex gap-3">
-                            <Link to="/home" className="text-decoration-none text-muted">Vitrine</Link>
+                        <div className="d-flex flex-wrap gap-3">
+                            <Link to="/home" className="text-decoration-none text-muted">Início</Link>
                             <Link to="/produtos" className="text-decoration-none text-muted">Catálogo</Link>
+                            <Link to="/wishlist" className="text-decoration-none text-muted">Desejos</Link>
                             <Link to="/carrinho" className="text-decoration-none text-muted">Carrinho</Link>
+                            <Link to="/perfil" className="text-decoration-none text-muted">Meu Perfil</Link>
                             <Link to="/admin" className="text-decoration-none text-primary fw-semibold">
                                 🎓 Painel Admin & Prática Professor
                             </Link>

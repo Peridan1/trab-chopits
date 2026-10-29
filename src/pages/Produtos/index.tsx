@@ -75,7 +75,7 @@ export const Produtos: React.FC = () => {
                 </Link>
             </div>
 
-            {/* Barra de Filtros e Ordenação Estilo Marketplace */}
+            {/* Barra de Filtros e Ordenação da Loja */}
             <div className="card border-0 shadow-sm rounded-4 p-3 mb-4">
                 <div className="row g-3 align-items-center">
                     {/* Filtro de Categoria */}
