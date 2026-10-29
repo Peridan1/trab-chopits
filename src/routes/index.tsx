@@ -52,7 +52,7 @@ export const Rotas = () => {
                 <footer className="bg-white border-top py-4 mt-auto">
                     <div className="container d-flex flex-wrap justify-content-between align-items-center gap-3 small text-muted">
                         <div>
-                            <strong className="text-dark">🛍️ Chopits Store — E-commerce Oficial</strong> — Desenvolvido por Daniel Satel Pereira (4º Semestre ADS)
+                            <strong className="text-dark">🛍️ Chopits Store — E-commerce Oficial</strong> — Desenvolvido por Daniel Satel Pereira (6º Semestre SI)
                         </div>
                         <div className="d-flex flex-wrap gap-3">
                             <Link to="/home" className="text-decoration-none text-muted">Início</Link>
