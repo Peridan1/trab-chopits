@@ -1,345 +1,193 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { api, ENDPOINTS } from "../../services/api";
-import type { Produto, ItemCarrinho } from "../../types";
+import React, { useState, useEffect, useMemo } from "react";
+import { useParams, Link } from "react-router-dom";
+import { useStore } from "../../context/StoreContext";
+import { ProductCard } from "../../components/ProductCard";
 
 export const Produtos: React.FC = () => {
     const { parametro } = useParams<{ parametro?: string }>();
-    const [produtos, setProdutos] = useState<Produto[]>([]);
-    const [carrinho, setCarrinho] = useState<ItemCarrinho[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [erro, setErro] = useState<string | null>(null);
+    const { produtos, buscaGlobal, setBuscaGlobal, loading } = useStore();
 
-    // Filtros
-    const [busca, setBusca] = useState("");
-    const [categoriaFiltro, setCategoriaFiltro] = useState(parametro || "todas");
-
-    // Modal de Cadastro de Produto
-    const [modalAberto, setModalAberto] = useState(false);
-    const [nomeInput, setNomeInput] = useState("");
-    const [categoriaInput, setCategoriaInput] = useState("eletronicos");
-    const [precoInput, setPrecoInput] = useState("");
-    const [imagemInput, setImagemInput] = useState("📦");
-    const [descricaoInput, setDescricaoInput] = useState("");
-    const [estoqueInput, setEstoqueInput] = useState("10");
-
-    // Carregar Produtos da API (dados.json)
-    const carregarDados = async () => {
-        setLoading(true);
-        setErro(null);
-        try {
-            const [respProdutos, respCarrinho] = await Promise.all([
-                api.get<Produto[]>(ENDPOINTS.PRODUTOS),
-                api.get<ItemCarrinho[]>(ENDPOINTS.CARRINHO)
-            ]);
-
-            setProdutos(respProdutos.data);
-            setCarrinho(respCarrinho.data);
-        } catch (err: unknown) {
-            console.error("Erro ao carregar produtos:", err);
-            const msg = err instanceof Error ? err.message : "Erro desconhecido";
-            setErro(`Falha na comunicação com a API REST (${msg}). Verifique se o backend está em execução.`);
-            setProdutos([]);
-            setCarrinho([]);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const [categoriaFiltro, setCategoriaFiltro] = useState<string>(parametro || "todas");
+    const [ordenacao, setOrdenacao] = useState<"relevancia" | "vendidos" | "menor_preco" | "maior_preco">("relevancia");
+    const [apenasFreteGratis, setApenasFreteGratis] = useState<boolean>(false);
+    const [apenasRelampago, setApenasRelampago] = useState<boolean>(parametro === "ofertas");
 
     useEffect(() => {
-        carregarDados();
-    }, []);
-
-    // Adicionar Produto ao Carrinho na API (POST /carrinho)
-    const adicionarAoCarrinho = async (produto: Produto) => {
-        const itemExistente = carrinho.find(c => c.produtoId === produto.id);
-
-        try {
-            if (itemExistente && itemExistente.id) {
-                const novaQtd = itemExistente.quantidade + 1;
-                await api.put(`${ENDPOINTS.CARRINHO}/${itemExistente.id}`, {
-                    ...itemExistente,
-                    quantidade: novaQtd
-                });
-                setCarrinho(prev =>
-                    prev.map(c => c.id === itemExistente.id ? { ...c, quantidade: novaQtd } : c)
-                );
-            } else {
-                const novoItem: ItemCarrinho = {
-                    produtoId: produto.id,
-                    nome: produto.nome,
-                    preco: produto.preco,
-                    quantidade: 1
-                };
-                const resp = await api.post<ItemCarrinho>(ENDPOINTS.CARRINHO, novoItem);
-                setCarrinho(prev => [...prev, resp.data]);
-            }
-            alert(`" ${produto.nome} " foi adicionado ao seu carrinho! 🛒`);
-        } catch (err) {
-            console.error("Erro ao adicionar no carrinho:", err);
-            setCarrinho(prev => [...prev, { produtoId: produto.id, nome: produto.nome, preco: produto.preco, quantidade: 1 }]);
+        if (parametro === "ofertas") {
+            setCategoriaFiltro("todas");
+            setApenasRelampago(true);
+        } else if (parametro) {
+            setCategoriaFiltro(parametro.toLowerCase());
+            setApenasRelampago(false);
+        } else {
+            setCategoriaFiltro("todas");
         }
-    };
+    }, [parametro]);
 
-    // Criar Novo Produto no Catálogo (POST /produtos)
-    const salvarNovoProduto = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!nomeInput.trim() || !precoInput) return;
+    const produtosFiltradosEOrdenados = useMemo(() => {
+        const filtrados = produtos.filter((p) => {
+            const matchCat =
+                categoriaFiltro === "todas" ||
+                categoriaFiltro === "ofertas" ||
+                p.categoria.toLowerCase() === categoriaFiltro ||
+                String(p.id) === categoriaFiltro;
 
-        const novoProdutoData = {
-            nome: nomeInput.trim(),
-            categoria: categoriaInput,
-            preco: parseFloat(precoInput),
-            imagem: imagemInput || "📦",
-            descricao: descricaoInput.trim() || "Produto sem descrição.",
-            estoque: parseInt(estoqueInput, 10) || 10
-        };
+            const termo = buscaGlobal.trim().toLowerCase();
+            const matchBusca =
+                !termo ||
+                p.nome.toLowerCase().includes(termo) ||
+                p.descricao.toLowerCase().includes(termo) ||
+                p.categoria.toLowerCase().includes(termo);
 
-        try {
-            const resp = await api.post<Produto>(ENDPOINTS.PRODUTOS, novoProdutoData);
-            setProdutos(prev => [...prev, resp.data]);
-            setModalAberto(false);
-            limparFormulario();
-        } catch (err) {
-            console.error("Erro ao criar produto:", err);
-            const novoId = produtos.length ? Math.max(...produtos.map(p => p.id)) + 1 : 1;
-            setProdutos(prev => [...prev, { id: novoId, ...novoProdutoData }]);
-            setModalAberto(false);
-            limparFormulario();
-        }
-    };
+            const matchFrete = !apenasFreteGratis || Boolean(p.freteGratis);
+            const matchFlash = !apenasRelampago || Boolean(p.ofertaRelampago);
 
-    // Excluir Produto (DELETE /produtos/:id)
-    const excluirProduto = async (id: number) => {
-        if (!window.confirm("Deseja realmente remover este produto do banco de dados (dados.json)?")) return;
-        try {
-            await api.delete(`${ENDPOINTS.PRODUTOS}/${id}`);
-            setProdutos(prev => prev.filter(p => p.id !== id));
-        } catch (err) {
-            console.error("Erro ao excluir produto:", err);
-            setProdutos(prev => prev.filter(p => p.id !== id));
-        }
-    };
+            return matchCat && matchBusca && matchFrete && matchFlash;
+        });
 
-    const limparFormulario = () => {
-        setNomeInput("");
-        setCategoriaInput("eletronicos");
-        setPrecoInput("");
-        setImagemInput("📦");
-        setDescricaoInput("");
-        setEstoqueInput("10");
-    };
-
-    const totalItensCarrinho = carrinho.reduce((acc, item) => acc + item.quantidade, 0);
-
-    const produtosFiltrados = produtos.filter(p => {
-        const atendeCategoria =
-            categoriaFiltro === "todas" ||
-            p.categoria.toLowerCase() === categoriaFiltro.toLowerCase() ||
-            (parametro && p.id.toString() === parametro);
-        
-        const atendeBusca = p.nome.toLowerCase().includes(busca.toLowerCase()) ||
-                            p.descricao.toLowerCase().includes(busca.toLowerCase());
-
-        return atendeCategoria && atendeBusca;
-    });
+        return [...filtrados].sort((a, b) => {
+            if (ordenacao === "vendidos") return (b.vendidos || 0) - (a.vendidos || 0);
+            if (ordenacao === "menor_preco") return a.preco - b.preco;
+            if (ordenacao === "maior_preco") return b.preco - a.preco;
+            return 0;
+        });
+    }, [produtos, categoriaFiltro, buscaGlobal, apenasFreteGratis, apenasRelampago, ordenacao]);
 
     return (
         <div className="py-2">
-            <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+            {/* Cabeçalho do Catálogo */}
+            <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
                 <div>
-                    <h2 className="fw-bold mb-1">Catálogo de Produtos Chopits</h2>
-                    <p className="text-muted mb-0">
-                        Consumo refatorado via cliente centralizado <code>api</code>
+                    <h3 className="fw-bold m-0">📦 Catálogo Oficial Chopits</h3>
+                    <p className="text-muted small m-0">
+                        {parametro ? (
+                            <>
+                                Rota dinâmica ativa: <code>/produtos/{parametro}</code>
+                            </>
+                        ) : (
+                            "Explore todos os departamentos com garantia e envio rápido"
+                        )}
                     </p>
                 </div>
 
-                <div className="d-flex align-items-center gap-2">
-                    <button className="btn btn-success btn-sm" onClick={() => setModalAberto(!modalAberto)}>
-                        ➕ Novo Produto
-                    </button>
-                    <span className="badge bg-primary fs-6 p-2">
-                        🛒 Carrinho API: {totalItensCarrinho} {totalItensCarrinho === 1 ? "item" : "itens"}
-                    </span>
-                </div>
+                <Link to="/admin" className="btn btn-outline-primary btn-sm">
+                    ➕ Cadastrar / Gerenciar Produtos
+                </Link>
             </div>
 
-            {erro && (
-                <div className="alert alert-warning mb-4" role="alert">
-                    ⚠️ {erro}
-                </div>
-            )}
-
-            {/* Modal para Cadastro de Produto */}
-            {modalAberto && (
-                <div className="card shadow-sm border-success mb-4">
-                    <div className="card-header bg-success text-white fw-semibold">
-                        🛍️ Cadastrar Novo Produto
-                    </div>
-                    <div className="card-body">
-                        <form onSubmit={salvarNovoProduto}>
-                            <div className="row g-3">
-                                <div className="col-md-6">
-                                    <label className="form-label fw-semibold">Nome do Produto:</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        placeholder="Ex: Mouse Sem Fio Ergológico"
-                                        value={nomeInput}
-                                        onChange={e => setNomeInput(e.target.value)}
-                                        required
-                                    />
-                                </div>
-                                <div className="col-md-3">
-                                    <label className="form-label fw-semibold">Categoria:</label>
-                                    <select
-                                        className="form-select"
-                                        value={categoriaInput}
-                                        onChange={e => setCategoriaInput(e.target.value)}
-                                    >
-                                        <option value="eletronicos">Eletrônicos</option>
-                                        <option value="acessorios">Acessórios</option>
-                                        <option value="moda">Moda</option>
-                                    </select>
-                                </div>
-                                <div className="col-md-3">
-                                    <label className="form-label fw-semibold">Preço (R$):</label>
-                                    <input
-                                        type="number"
-                                        step="0.01"
-                                        className="form-control"
-                                        placeholder="99.90"
-                                        value={precoInput}
-                                        onChange={e => setPrecoInput(e.target.value)}
-                                        required
-                                    />
-                                </div>
-                                <div className="col-md-2">
-                                    <label className="form-label fw-semibold">Ícone / Emoji:</label>
-                                    <input
-                                        type="text"
-                                        className="form-control text-center"
-                                        value={imagemInput}
-                                        onChange={e => setImagemInput(e.target.value)}
-                                    />
-                                </div>
-                                <div className="col-md-2">
-                                    <label className="form-label fw-semibold">Estoque:</label>
-                                    <input
-                                        type="number"
-                                        className="form-control"
-                                        value={estoqueInput}
-                                        onChange={e => setEstoqueInput(e.target.value)}
-                                    />
-                                </div>
-                                <div className="col-md-8">
-                                    <label className="form-label fw-semibold">Descrição:</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        placeholder="Detalhes e especificações..."
-                                        value={descricaoInput}
-                                        onChange={e => setDescricaoInput(e.target.value)}
-                                    />
-                                </div>
-                            </div>
-                            <div className="mt-3 d-flex gap-2 justify-content-end">
-                                <button type="button" className="btn btn-secondary" onClick={() => setModalAberto(false)}>
-                                    Cancelar
-                                </button>
-                                <button type="submit" className="btn btn-success">
-                                    Salvar no Banco
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
-
-            {/* Barra de Filtros */}
-            <div className="card p-3 mb-4 shadow-sm bg-light">
-                <div className="row g-3">
-                    <div className="col-md-6">
-                        <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Buscar por nome ou descrição..."
-                            value={busca}
-                            onChange={e => setBusca(e.target.value)}
-                        />
-                    </div>
-                    <div className="col-md-6">
+            {/* Barra de Filtros e Ordenação Estilo Marketplace */}
+            <div className="card border-0 shadow-sm rounded-4 p-3 mb-4">
+                <div className="row g-3 align-items-center">
+                    {/* Filtro de Categoria */}
+                    <div className="col-md-4">
+                        <label className="form-label small fw-bold text-muted mb-1">
+                            Departamento:
+                        </label>
                         <select
-                            className="form-select"
+                            className="form-select form-select-sm"
                             value={categoriaFiltro}
-                            onChange={e => setCategoriaFiltro(e.target.value)}
+                            onChange={(e) => setCategoriaFiltro(e.target.value)}
                         >
-                            <option value="todas">Todas as Categorias</option>
-                            <option value="eletronicos">Eletrônicos</option>
-                            <option value="acessorios">Acessórios</option>
-                            <option value="moda">Moda</option>
+                            <option value="todas">Todos os Departamentos</option>
+                            <option value="eletronicos">🎧 Eletrônicos</option>
+                            <option value="games">⌨️ Games & Setup</option>
+                            <option value="acessorios">🎒 Acessórios</option>
+                            <option value="moda">👕 Moda Tech</option>
+                            <option value="casa">💡 Casa & Office</option>
                         </select>
                     </div>
+
+                    {/* Ordenação */}
+                    <div className="col-md-4">
+                        <label className="form-label small fw-bold text-muted mb-1">
+                            Ordenar por:
+                        </label>
+                        <select
+                            className="form-select form-select-sm"
+                            value={ordenacao}
+                            onChange={(e) =>
+                                setOrdenacao(
+                                    e.target.value as
+                                        | "relevancia"
+                                        | "vendidos"
+                                        | "menor_preco"
+                                        | "maior_preco"
+                                )
+                            }
+                        >
+                            <option value="relevancia">✨ Mais Relevantes</option>
+                            <option value="vendidos">🔥 Mais Vendidos</option>
+                            <option value="menor_preco">💲 Menor Preço</option>
+                            <option value="maior_preco">💎 Maior Preço</option>
+                        </select>
+                    </div>
+
+                    {/* Checkboxes Rápidos */}
+                    <div className="col-md-4 d-flex flex-wrap gap-3 pt-md-3">
+                        <div className="form-check m-0">
+                            <input
+                                id="filtroFrete"
+                                type="checkbox"
+                                className="form-check-input"
+                                checked={apenasFreteGratis}
+                                onChange={(e) => setApenasFreteGratis(e.target.checked)}
+                            />
+                            <label htmlFor="filtroFrete" className="form-check-label small fw-semibold">
+                                🚚 Frete Grátis
+                            </label>
+                        </div>
+
+                        <div className="form-check m-0">
+                            <input
+                                id="filtroRelampago"
+                                type="checkbox"
+                                className="form-check-input"
+                                checked={apenasRelampago}
+                                onChange={(e) => setApenasRelampago(e.target.checked)}
+                            />
+                            <label htmlFor="filtroRelampago" className="form-check-label small fw-semibold text-danger">
+                                ⚡ Ofertas Relâmpago
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            {/* Loading ou Grid */}
+            {/* Grade de Produtos */}
             {loading ? (
                 <div className="text-center py-5">
-                    <div className="spinner-border text-primary" role="status">
-                        <span className="visually-hidden">Carregando...</span>
-                    </div>
-                    <p className="mt-2 text-muted">Carregando catálogo...</p>
+                    <div className="spinner-border text-primary" role="status" />
                 </div>
-            ) : produtosFiltrados.length === 0 ? (
-                <div className="text-center py-5 text-muted">
-                    Nenhum produto encontrado para os filtros selecionados.
+            ) : produtosFiltradosEOrdenados.length === 0 ? (
+                <div className="card border-0 shadow-sm rounded-4 p-5 text-center">
+                    <div className="display-4 mb-2">🔍</div>
+                    <h5 className="fw-bold">Nenhum produto corresponde aos filtros selecionados</h5>
+                    <p className="text-muted small">
+                        Experimente remover alguns filtros para ver todas as opções disponíveis.
+                    </p>
+                    <div>
+                        <button
+                            type="button"
+                            className="btn chopits-btn-primary btn-sm px-4"
+                            onClick={() => {
+                                setCategoriaFiltro("todas");
+                                setApenasFreteGratis(false);
+                                setApenasRelampago(false);
+                                setBuscaGlobal("");
+                            }}
+                        >
+                            Limpar Todos os Filtros
+                        </button>
+                    </div>
                 </div>
             ) : (
-                <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                    {produtosFiltrados.map((produto) => (
+                <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+                    {produtosFiltradosEOrdenados.map((produto) => (
                         <div className="col" key={produto.id}>
-                            <div className="card h-100 shadow-sm border-0 position-relative">
-                                <button
-                                    className="btn btn-sm btn-light position-absolute top-0 end-0 m-2 text-danger rounded-circle shadow-sm"
-                                    onClick={() => excluirProduto(produto.id)}
-                                    title="Excluir produto"
-                                >
-                                    🗑️
-                                </button>
-
-                                <div className="card-body p-4 d-flex flex-column justify-content-between">
-                                    <div>
-                                        <div className="display-3 text-center mb-3 p-3 bg-light rounded">
-                                            {produto.imagem}
-                                        </div>
-                                        <div className="d-flex justify-content-between align-items-center mb-2">
-                                            <span className="badge bg-secondary text-uppercase fs-7">
-                                                {produto.categoria}
-                                            </span>
-                                            <span className="fs-5 fw-bold text-success">
-                                                R$ {produto.preco.toFixed(2)}
-                                            </span>
-                                        </div>
-                                        <h5 className="card-title fw-bold text-dark">{produto.nome}</h5>
-                                        <p className="card-text text-muted small">{produto.descricao}</p>
-                                        {produto.estoque !== undefined && (
-                                            <p className="small text-secondary mb-0">
-                                                📦 Estoque: <strong>{produto.estoque} unidades</strong>
-                                            </p>
-                                        )}
-                                    </div>
-
-                                    <div className="mt-4 pt-2 border-top">
-                                        <button
-                                            className="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2"
-                                            onClick={() => adicionarAoCarrinho(produto)}
-                                        >
-                                            <span>🛒</span> Adicionar ao Carrinho
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                            <ProductCard
+                                produto={produto}
+                                mostrarBarraRelampago={apenasRelampago}
+                            />
                         </div>
                     ))}
                 </div>
